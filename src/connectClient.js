@@ -1,6 +1,7 @@
 const manager = require('bluetooth');
 const errorHandler = require('./errorHandler');
 const handlePromise = errorHandler.handlePromise;
+const { io } = require('./server');
 
 module.exports = function(socket) {
   Object
@@ -25,14 +26,26 @@ module.exports = function(socket) {
 
   socket.on('connectDevice', handlePromise(async (deviceName) => {
     const object = manager.getObject(deviceName);
-    if (object && object.isDevice) {
-      const device = object.device;
-      
+    if (!object || !object.isDevice) {
+      return;
+    }
+
+    const { device } = object; 
+    io.emit('device-changed', deviceName, { Connecting: true });
+
+    try {
       if (!await device.getPaired()) {
         await device.pair();
       } else {
         await device.connect();
       }
+    } catch(e) {
+      if (e[0] && e[0] === 'Host is down') {
+        return;
+      }
+      throw e;
+    } finally {
+      io.emit('device-changed', deviceName, { Connecting: false });
     }
   }));
 

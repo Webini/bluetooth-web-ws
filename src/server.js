@@ -2,8 +2,8 @@ const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const debug = require('./debug');
-const connectClient = require('./connectClient');
 module.exports = { io, server };
+const connectClient = require('./connectClient');
 const bluetooth = require('./bluetooth');
 
 require('dotenv').config();
