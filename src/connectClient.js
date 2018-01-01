@@ -1,11 +1,6 @@
 const manager = require('bluetooth');
 const errorHandler = require('./errorHandler');
-
-function handlePromise(fnPromise) {
-  return function () {
-    fnPromise.apply(fnPromise, arguments).catch(errorHandler);
-  };
-}
+const handlePromise = errorHandler.handlePromise;
 
 module.exports = function(socket) {
   Object

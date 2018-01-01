@@ -1,17 +1,17 @@
 const Agent = require('bluetooth/src/Agent');
 const debug = require('./debug');
-const { io } = require('./server');
 
 class BluetoothAgent extends Agent {
   constructor(path) {
+    console.log('BT agent', path);
     super(path);
   }
-
   release() {
     debug('Agent released');
   }
   requestPinCode(device) {
     console.log('requestPinCode', device);
+    return 1234;
     // throw new Error('You must implement requestPinCode method');
   }
   displayPinCode(device, pin) {
@@ -20,6 +20,7 @@ class BluetoothAgent extends Agent {
   }
   requestPasskey(device) {
     console.log('requestPasskey', device);
+    return 1234;
     // throw new Error('You must implement requestPasskey method');
   }
   displayPasskey(device, passKey, entered) {
@@ -27,15 +28,14 @@ class BluetoothAgent extends Agent {
     // throw new Error('You must implement displayPasskey method');
   }
   requestConfirmation(device, passKey) {
-    console.log('requestConfirmation', device, passKey);
-    // throw new Error('You must implement requestConfirmation method');
+    debug('requestConfirmation', device, passKey);
   }
   requestAuthorization(device) {
-    console.log('requestAuthorization', device);
+    debug('requestAuthorization', device);
     // throw new Error('You must implement requestAuthorization method');
   }
   authorizeService(device, uuid) {
-    console.log('authorizeService', uuid);
+    debug('authorizeService', uuid);
     // throw new Error('You must implement authorizeService method');
   }
   cancel() {

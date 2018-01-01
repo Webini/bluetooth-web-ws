@@ -4,7 +4,7 @@ const BluetoothAgent = require('./BluetoothAgent');
 const AgentManager = require('bluetooth/src/AgentManager');
 const caps = require('bluetooth/src/AgentCapabilities');
 const { io } = require('./server');
-const errorHandler = require('./errorHandler');
+const { handlePromise } = require('./errorHandler');
 
 async function initAdapter(object) {
   await object.adapter.setDiscoverableTimeout(0);
@@ -30,7 +30,7 @@ async function initDevice(object) {
   });
 }
 
-async function onObjectRemoved(object) {
+function onObjectRemoved(object) {
   if (object.isDevice) {
     io.emit('device-removed', object.name);
   } else if(object.isAdapter) {
@@ -39,26 +39,22 @@ async function onObjectRemoved(object) {
 }
 
 module.exports = {
-  initialize: async () => {
-    manager.on('new', async (object) => {
-      try {
-        if (object.isAdapter) {
-          await initAdapter(object);
-        } else if (object.isDevice) {
-          await initDevice(object);
-        }
-      } catch(e) {
-        errorHandler(e);
+  initialize: handlePromise(async () => {
+    manager.on('new', handlePromise(async (object) => {
+      if (object.isAdapter) {
+        await initAdapter(object);
+      } else if (object.isDevice) {
+        await initDevice(object);
       }
-    });
+    }));
     
     manager.on('removed', (object) => {
-      onObjectRemoved(object).catch(errorHandler);
+      onObjectRemoved(object);
     });
     
-    try {
-      await AgentManager.registerAgent(new BluetoothAgent(), caps.keyboardOnly);
-      await manager.initialize();
-    } catch(e) { errorHandler(e); }
-  }
+    const agent = new BluetoothAgent();
+    await AgentManager.registerAgent(agent, caps.keyboardDisplay);
+    await AgentManager.requestDefaultAgent(agent);
+    await manager.initialize();
+  })
 };
