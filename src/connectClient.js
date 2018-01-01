@@ -47,14 +47,7 @@ module.exports = function(socket) {
       await object.device.disconnect();
     }
   }));
-
-  socket.on('removeDevice', handlePromise(async (deviceName) => {
-    const object = manager.getObject(deviceName);
-    if (object && object.isDevice) {
-      await object.device.disconnect();
-    }
-  }));
-
+  
   socket.on('removeDevice', handlePromise(async (deviceName) => {
     const object = manager.getObject(deviceName);
     if (!object || !object.isDevice) {
