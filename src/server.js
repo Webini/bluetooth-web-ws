@@ -1,4 +1,6 @@
-const app = require('express')();
+require('dotenv').config();
+const express = require('express');
+const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const debug = require('./debug');
@@ -7,6 +9,7 @@ const connectClient = require('./connectClient');
 const bluetooth = require('./bluetooth');
 
 require('dotenv').config();
+app.use(express.static(`${__dirname}/../public`));
 
 bluetooth.initialize();
 
