@@ -12,7 +12,8 @@ class BluetoothAdvertisement extends Advertisement {
       services.AudioSource,
       services.HandsfreeAudioGateway,
       services.Handsfree,
-      services.HeadsetHS
+      services.HeadsetHS,
+      services.AV_RemoteControl
     ];
 
     this.appearance = 640;    
